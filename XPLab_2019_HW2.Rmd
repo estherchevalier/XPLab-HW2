@@ -1,0 +1,219 @@
+---
+title: "Homework Task 2 -- Basics in R"
+date: 'Due: Thursday, May 2 by 08:59 CET'
+author: "Fabienne Kock, Esther Chevalier"
+output:
+  html_document
+---
+
+# Instructions
+* Work together within your group.
+* Make sure you have R and RStudio installed. If you are an advanced user and aren't using RStudio, make sure you have `rmarkdown` in order to 'knit' the HTML output.
+* Download [this zip file](https://michael-franke.github.io/XPLab_2019/homework/XPLab_2019_HW2.zip). It contains an .Rmd file that you will edit and submit.
+* Open the .Rmd file in RStudio.
+* Fill in your names in the 'author' heading.
+* Fill in the required code and answers.
+* 'Knit' the document (`ctrl/cmd` + `shift` + `K` in RStudio) to produce a HTML file.
+* Push both the files to your group's Git repository before the deadline.
+* Using Github Pages, make a page that displays the knitted html file.
+
+# Suggested readings
+* [R4DS](http://r4ds.had.co.nz/) (R for Data Science).
+
+# Required R packages
+* `tidyverse` (or `ggplot2`, `dplyr`, `purrr`, `tibble`)
+
+```{r}
+set.seed(123) # this ensures that any psuedo-random computations are always the same
+```
+
+___
+
+# 1. Installing and running R
+
+a.
+---
+
+Your first task is simply to show that you have been able to install
+and run R and R Markdown.  You don't have to change this code, just
+uncomment it. Then the correct output will automatically appear when
+you 'knit' the document.
+
+
+```{r tidy = FALSE, message = FALSE, warning = FALSE, error = FALSE}
+
+# UNCOMMENT THE CODE
+
+R.version
+
+sessionInfo()
+```
+
+
+**Which version of R are you running? On which platform are you running it?**
+
+*ANSWER:*
+
+R version 3.5.3 (2019-03-11)
+x86_64-pc-linux-gnu 
+
+
+b.
+---
+
+Install the package `tidyverse`. Don't install it in the code
+below. Instead, install it through the console. Then write code below
+to load the package and show the `sessionInfo` again.
+
+
+```{r tidy = FALSE, message = TRUE, warning = TRUE, error = FALSE}
+
+# YOUR CODE HERE
+library(tidyverse)
+
+sessionInfo()
+
+```
+
+
+**Which version of `tidyverse` do you have installed?**
+
+*ANSWER:*
+
+tidyverse_1.2.1
+
+
+___
+
+# 2. Tibbles (tidy tables)
+
+
+The ToothGrowth data set comes with base R. You can read about this data set
+by running `?ToothGrowth` in the console. It is a data frame. In this
+course, we prefer to use tibbles (tidy tables) instead of data frames.
+
+a.
+---
+
+Convert the `ToothGrowth` data frame into a tibble using `as_tibble()`. Put
+this in a new variable called `iris_tibble`. Then print the tibble
+using the `print()` function.
+
+```{r tidy = FALSE, message = FALSE, warning = FALSE, error = FALSE}
+
+# YOUR CODE HERE
+iris_tibble = as_tibble(ToothGrowth)
+print(iris_tibble)
+```
+
+
+
+**Which data type is the variable "supp"?**
+
+*ANSWER:*
+
+<fctr> = support factor
+
+typeof(ToothGrowth$supp)
+[1] "integer"
+
+The values are stored as integers because it is used as a factor, despite the original vector being initialised with strings.
+
+b.
+---
+
+Starting from the complete `ToothGrowth` data set, filter only the guinea pigs
+that were give orange juice.
+
+```{r tidy = FALSE, message = FALSE, warning = FALSE, error = FALSE}
+
+# YOUR CODE HERE
+iris_tibble %>% filter(supp == 'OJ')
+
+```
+
+**How many datapoints (i.e. guinea pigs) are left?**
+
+*ANSWER:*
+
+30
+
+
+
+c.
+---
+
+Starting from the complete `ToothGrowth` data set, filter only the guinea pigs
+that received ascorbic acid and had a dosage of 1.0mg or greater.
+
+```{r tidy = FALSE, message = FALSE, warning = FALSE, error = FALSE}
+
+# YOUR CODE HERE
+iris_tibble %>% filter(supp == 'VC') %>% filter(dose >= 1.0)
+
+
+```
+
+
+
+d.
+---
+
+Find out the mean length for the two supplement types. Do this with by
+piping `tooth_growth_tibble` to `group_by()` and then to `summarise()`.  For
+instructions read the help page for `summarise()`.
+
+```{r tidy = FALSE, message = FALSE, warning = FALSE, error = FALSE}
+
+# YOUR CODE HERE
+iris_tibble %>% 
+  group_by(supp) %>% 
+  summarise(len = mean(len))
+
+```
+
+
+**What is the mean tooth length for guinea pigs that received Orange Juice?**
+
+*ANSWER:*
+
+20.66333
+
+
+___
+
+# 3. Plotting data
+
+
+a.
+---
+
+Using the `ToothGrowth` data set, create a plot of dose (x
+axis) against length (y axis) using `ggplot()`. Show the two
+supplement types in different colours.
+
+```{r tidy = FALSE, message = FALSE, warning = FALSE, error = FALSE}
+
+# YOUR CODE HERE
+iris_tibble %>% 
+  ggplot(aes(x = dose, y = len, fill= supp)) +
+  labs(title = "Plot of Toothlength by dose", x ="Dose (mg)", y = "Teeth length") +
+  geom_smooth(data = filter(iris_tibble, supp == 'OJ')) + 
+  geom_smooth(data = filter(iris_tibble, supp == 'VC')) +
+  scale_fill_discrete(name="Supplement type",
+                         breaks=c("VC", "OJ"),
+                         labels=c("Vitamin C", "Orange Juice"))
+
+```
+
+
+**After visually inspecting the graph, does there seem to be any difference between the types of supplement?**
+
+*ANSWER:*
+
+The guinea pigs which were fed with orange juice had increased tooth growth in comparison to the ones fed with ascorbic acid. This effect disappears when both supplements are administered with a dose of 2.0 mg.
+
+
+___
+
+End of homework sheet
